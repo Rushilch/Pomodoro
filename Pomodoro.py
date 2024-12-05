@@ -3,8 +3,8 @@ from tkinter import ttk, filedialog, messagebox
 import ttkbootstrap as ttk
 import time
 import threading
-import subprocess
 from docx import Document
+import os
 
 
 
@@ -106,7 +106,7 @@ class Task:
         self.pdf_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if self.pdf_path:
             try:
-                self.pdf_process = subprocess.Popen(["start", self.pdf_path], shell=True)
+                os.startfile(self.pdf_path)
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to open PDF: {e}")
 
@@ -128,7 +128,7 @@ class Task:
         doc_file = f"{self.task_name.replace(" ", '')}.docx"
         doc.save(doc_file)
         try:
-            subprocess.Popen(["start", doc_file], shell=True)
+            os.startfile(doc_file)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open Word file: {e}")
 
