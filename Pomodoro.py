@@ -5,6 +5,7 @@ import time
 import threading
 from docx import Document
 import os
+from PIL import Image, ImageTk
 
 class Task:
     def __init__(self, parent, tasks, task_no, task_name=None, time=15):
@@ -181,6 +182,22 @@ class PomodoroApp:
         self.root.geometry("1280x720")
         self.root.resizable(False, False)
 
+        self.header = ttk.Label(self.root, text="Pomodoro Timer", font=("Helvetica", 24, "bold underline"), bootstyle="Danger")
+        self.header.pack(pady=20)
+        self.root.img = tk.PhotoImage(file="logo.png")
+        self.logo = ttk.Label(self.root, image=self.root.img)
+        self.logo.pack(pady=20)
+        self.tagline = ttk.Label(self.root, text="Time in your hands", font=("Helvetica", 14,"italic bold "), bootstyle="Danger")
+        self.tagline.pack()
+
+        self.tutorial = ttk.Label(self.root, text="Click here to get started", font=("Helvetica", 14,"italic bold "), bootstyle="Danger")
+        self.tutorial.pack(pady=20)
+        original_arrow_image = Image.open("arrow.png")
+        resized_arrow_image = original_arrow_image.resize((50, 100))
+        self.arrow_img = ImageTk.PhotoImage(resized_arrow_image)
+        self.arrow = ttk.Label(self.root, image=self.arrow_img)
+        self.arrow.pack()
+
         # Task container
         self.task_container = ttk.Frame(self.root)
         self.task_container.pack(fill="both",
@@ -204,6 +221,12 @@ class PomodoroApp:
 
     def add_task(self):
         task_no = f"Task {self.temp}"
+        if self.temp == 1:
+            self.header.forget()
+            self.logo.forget()
+            self.tagline.forget()
+            self.tutorial.forget()
+            self.arrow.forget()
         self.temp += 1
         new_task = Task(self.task_container,
                         self.tasks,
