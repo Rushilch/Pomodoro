@@ -6,6 +6,7 @@ import threading
 from docx import Document
 import os
 from PIL import Image, ImageTk
+import sys
 
 class Task:
     def __init__(self, parent, tasks, task_no, task_name=None, time=15):
@@ -106,6 +107,7 @@ class Task:
                                    font=("Helvetica", 12))
         self.pdf_label.grid(row=1, column=4, padx=10, pady=10)
 
+
     def start_timer(self):
         if not self.timer_running:
             self.timer_running = True
@@ -184,7 +186,9 @@ class PomodoroApp:
 
         self.header = ttk.Label(self.root, text="Pomodoro Timer", font=("Helvetica", 24, "bold underline"), bootstyle="Danger")
         self.header.pack(pady=20)
-        self.root.img = tk.PhotoImage(file="logo.png")
+
+        self.root.img = tk.PhotoImage(file=resource_path("logo.png"))
+
         self.logo = ttk.Label(self.root, image=self.root.img)
         self.logo.pack(pady=20)
         self.tagline = ttk.Label(self.root, text="Time in your hands", font=("Helvetica", 14,"italic bold "), bootstyle="Danger")
@@ -192,11 +196,12 @@ class PomodoroApp:
 
         self.tutorial = ttk.Label(self.root, text="Click here to get started", font=("Helvetica", 14,"italic bold "), bootstyle="Danger")
         self.tutorial.pack(pady=20)
-        original_arrow_image = Image.open("arrow.png")
-        resized_arrow_image = original_arrow_image.resize((50, 100))
-        self.arrow_img = ImageTk.PhotoImage(resized_arrow_image)
-        self.arrow = ttk.Label(self.root, image=self.arrow_img)
-        self.arrow.pack()
+
+        arrow_image = Image.open(resource_path("arrow.png"))
+        arrow_image_resized = arrow_image.resize((50, 100))  # Resize to 50x100
+        self.root.arrow_image_tk = ImageTk.PhotoImage(arrow_image_resized)
+        self.arrow_label = ttk.Label(self.root, image=self.root.arrow_image_tk)
+        self.arrow_label.pack()
 
         # Task container
         self.task_container = ttk.Frame(self.root)
@@ -216,8 +221,10 @@ class PomodoroApp:
         self.add_task_button.pack(side="bottom",
                                   padx=10,
                                   pady=10)
+
         self.temp = 1
         self.tasks = []
+
 
     def add_task(self):
         task_no = f"Task {self.temp}"
@@ -226,7 +233,7 @@ class PomodoroApp:
             self.logo.forget()
             self.tagline.forget()
             self.tutorial.forget()
-            self.arrow.forget()
+            self.arrow_label.forget()
         self.temp += 1
         new_task = Task(self.task_container,
                         self.tasks,
@@ -234,6 +241,12 @@ class PomodoroApp:
         self.tasks.append(new_task)
         print(self.tasks)
 
+def resource_path(relative_path):
+    try:
+        base_path = getattr(sys, '_MEIPASS', os.path.abspath('.'))
+    except Exception:
+        base_path = os.path.abspath('.')
+    return os.path.join(base_path, relative_path)
 
 if __name__ == "__main__":
     root = ttk.Window("Pomodoro Timer", "superhero")
