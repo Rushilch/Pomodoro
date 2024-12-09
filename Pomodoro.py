@@ -6,8 +6,6 @@ import threading
 from docx import Document
 import os
 
-
-
 class Task:
     def __init__(self, parent, tasks, task_no, task_name=None, time=15):
         self.parent = parent
@@ -17,50 +15,92 @@ class Task:
         self.time = time
         self.time_remaining = time * 60
         self.timer_running = False
-        self.pdf_process = None
         self.pdf_path = ''
         self.create_widgets()
 
     def create_widgets(self):
+        # frame
+        self.frame = ttk.Frame(self.parent,
+                               padding=10,
+                               relief="solid")
+        self.frame.pack(fill="x", padx=5, pady=5)
 
-        self.frame = ttk.Frame(self.parent, padding=10, relief="ridge")
-        self.frame.pack(fill="x", pady=5)
 
+        self.task_no_label = ttk.Label(self.frame,
+                                       text=self.task_no,
+                                       font=("Helvetica",16))
+        self.task_no_label.grid(row=0, column=0, padx=5, sticky="w")
 
-        self.task_label = ttk.Label(self.frame, text=self.task_no, font=("Helvetica", 16))
-        self.task_label.grid(row=0, column=0,padx=5, sticky="w")
-
-        self.timer_label = ttk.Label(self.frame, text="15:00", font=("Helvetica", 16), bootstyle="info")
+        self.timer_label = ttk.Label(self.frame,
+                                     text="15:00",
+                                     font=("Helvetica",16),
+                                     bootstyle="info")
         self.timer_label.grid(row=0, column=1)
 
-        self.task_entry = ttk.Entry(self.frame, font=("Helvetica", 16), width=10)
-        self.task_entry.grid(row=0, column=2, padx=10)
+        self.task_name_label = ttk.Label(self.frame,
+                                         text="Task Name",
+                                         font=("Helvetica", 12))
+        self.task_name_label.grid(row=0, column=2, padx=5, sticky="w")
 
+        self.task_entry = ttk.Entry(self.frame,
+                                    font=("Helvetica", 14),
+                                    width=10,
+                                    bootstyle='light')
+        self.task_entry.grid(row=0, column=3, padx=6)
+
+        self.time_label= ttk.Label(self.frame,
+                                   text="Time",
+                                   font=("Helvetica", 12))
+        self.time_label.grid(row=0, column=4, padx=5, sticky="w")
 
         self.timer_var = tk.StringVar()
-        self.timer_var.trace_add("write", self.on_timer_entry_change)  # Monitor changes
-        self.timer_entry = ttk.Entry(self.frame, textvariable=self.timer_var, font=("Helvetica", 16), width=5)
-        self.timer_entry.grid(row=0, column=3, padx=100)
+        self.timer_entry = ttk.Entry(self.frame,
+                                     textvariable=self.timer_var,
+                                     font=("Helvetica", 14),
+                                     width=4,
+                                     bootstyle="light")
+        self.timer_entry.grid(row=0, column=5, padx=10)
+
+        self.timer_button = ttk.Button(self.frame,
+                                       command=self.confirm_time,
+                                       width=4,
+                                       text="OK",
+                                       cursor='hand2',
+                                       bootstyle='success',
+                                       )
+        self.timer_button.grid(row=0, column=6, padx=5)
+
+        self.start_button = ttk.Button(self.frame,
+                                       text="Start",
+                                       command=self.start_timer,
+                                       bootstyle="success",
+                                       cursor='hand2')
+        self.start_button.grid(row=1, column=0, padx=10, pady=10)
 
 
-        self.start_button = ttk.Button(self.frame, text="Start", command=self.start_timer, bootstyle="success")
-        self.start_button.grid(row=1, column=0, padx=5, pady=15, sticky="w")
+        self.reset_button = ttk.Button(self.frame,
+                                       text="Reset",
+                                       command=self.reset_timer,
+                                       bootstyle='info',
+                                       cursor='hand2')
+        self.reset_button.grid(row=1, column=1, padx=10, pady=10)
 
 
-        self.reset_button = ttk.Button(self.frame, text="Reset", command=self.reset_timer , bootstyle='info')
-        self.reset_button.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+        self.delete_button = ttk.Button(self.frame,
+                                        text="Delete",
+                                        command=self.delete_timer,
+                                        bootstyle="danger",
+                                        cursor='hand2')
+        self.delete_button.grid(row=1, column=2, padx=10, pady=10)
 
 
-        self.delete_time = ttk.Button(self.frame, text="Delete", command=self.delete_timer, bootstyle="danger")
-        self.delete_time.grid(row=1, column=2,padx=5, pady=5, sticky="w")
+        self.open_pdf_button = ttk.Button(self.frame,
+                                          text="Open PDF",
+                                          command=self.open_pdf,
+                                          bootstyle="info",
+                                          cursor='hand2')
+        self.open_pdf_button.grid(row=1, column=3,padx=10, pady=10)
 
-
-        self.open_pdf_button = ttk.Button(self.frame, text="Open PDF", command=self.open_pdf, bootstyle="info")
-        self.open_pdf_button.grid(row=1, column=3,padx=5, pady=5, sticky="w")
-
-    def on_timer_entry_change(self, *args):
-        if self.timer_var.get().strip():
-            self.confirm_time()
 
     def start_timer(self):
         if not self.timer_running:
@@ -88,7 +128,6 @@ class Task:
             self.task_name = self.task_entry.get()
             self.timer_label.config(text="00:00")
             messagebox.showinfo("Time's Up!", f"Time's up for task: {self.task_name}")
-            self.close_pdf()
             self.open_word_file()
 
     def confirm_time(self):
@@ -110,10 +149,6 @@ class Task:
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to open PDF: {e}")
 
-    def close_pdf(self):
-        if self.pdf_process:
-            self.pdf_process.terminate()
-            self.pdf_process = None
 
     def open_word_file(self):
         if self.task_entry.get() != '':
@@ -133,26 +168,42 @@ class Task:
             messagebox.showerror("Error", f"Failed to open Word file: {e}")
 
 
+
+
 class PomodoroApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Pomodoro Timer")
-        self.root.geometry("600x400")
+        self.root.geometry("1280x720")
+        self.root.resizable(False, False)
 
         # Task container
         self.task_container = ttk.Frame(self.root)
-        self.task_container.pack(fill="both", expand=True, padx=10, pady=10)
+        self.task_container.pack(fill="both",
+                                 expand=True,
+                                 padx=10,
+                                 pady=10)
 
         # Add Task Button
-        self.add_task_button = ttk.Button(self.root, text="Add New Task", command=self.add_task , bootstyle="info")
-        self.add_task_button.pack(side="right", padx=10, pady=10)
+        self.add_task_button = ttk.Button(self.root,
+                                          width=20,
+                                          text="Add New Task",
+                                          command=self.add_task,
+                                          bootstyle="info",
+                                          cursor='hand2',
+                                          )
+        self.add_task_button.pack(side="right",
+                                  padx=10,
+                                  pady=10)
         self.temp = 1
         self.tasks = []
 
     def add_task(self):
         task_no = f"Task {self.temp}"
         self.temp += 1
-        new_task = Task(self.task_container, self.tasks, task_no)
+        new_task = Task(self.task_container,
+                        self.tasks,
+                        task_no)
         self.tasks.append(new_task)
         print(self.tasks)
 
