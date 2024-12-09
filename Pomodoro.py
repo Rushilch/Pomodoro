@@ -93,7 +93,6 @@ class Task:
                                         cursor='hand2')
         self.delete_button.grid(row=1, column=2, padx=10, pady=10)
 
-
         self.open_pdf_button = ttk.Button(self.frame,
                                           text="Open PDF",
                                           command=self.open_pdf,
@@ -101,6 +100,10 @@ class Task:
                                           cursor='hand2')
         self.open_pdf_button.grid(row=1, column=3,padx=10, pady=10)
 
+        self.pdf_label = ttk.Label(self.frame,
+                                   text="No PDF selected",
+                                   font=("Helvetica", 12))
+        self.pdf_label.grid(row=1, column=4, padx=10, pady=10)
 
     def start_timer(self):
         if not self.timer_running:
@@ -146,6 +149,7 @@ class Task:
         if self.pdf_path:
             try:
                 os.startfile(self.pdf_path)
+                self.pdf_label.config(text=self.pdf_path)
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to open PDF: {e}")
 
@@ -192,7 +196,7 @@ class PomodoroApp:
                                           bootstyle="info",
                                           cursor='hand2',
                                           )
-        self.add_task_button.pack(side="right",
+        self.add_task_button.pack(side="bottom",
                                   padx=10,
                                   pady=10)
         self.temp = 1
