@@ -1,3 +1,4 @@
+import subprocess
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import ttkbootstrap as ttk
@@ -7,6 +8,7 @@ from docx import Document
 import os
 from PIL import Image, ImageTk
 import sys
+import webbrowser
 
 class Task:
     def __init__(self, parent, tasks, task_no, task_name=None, time=15):
@@ -134,7 +136,7 @@ class Task:
             self.timer_running = False
             self.task_name = self.task_entry.get()
             self.timer_label.config(text="00:00")
-            messagebox.showinfo("Time's Up!", f"Time's up for task: {self.task_name}", bootstyle="")
+            messagebox.showinfo("Time's Up!", f"Time's up for task: {self.task_name}")
             self.open_word_file()
 
     def confirm_time(self):
@@ -152,7 +154,7 @@ class Task:
         self.pdf_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if self.pdf_path:
             try:
-                os.startfile(self.pdf_path)
+                webbrowser.open(self.pdf_path)
                 self.pdf_name = os.path.basename(self.pdf_path)
                 max_length = 20
                 if len(self.pdf_name) > max_length:
@@ -175,7 +177,7 @@ class Task:
         doc_file = f"{self.task_name.replace(" ", '')}.docx"
         doc.save(doc_file)
         try:
-            os.startfile(doc_file)
+            subprocess.run(["start", doc_file], shell=True, check=True)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open Word file: {e}")
 
