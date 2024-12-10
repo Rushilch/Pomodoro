@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d99ba49-a57a-44b7-856b-d49fa5924426" name="Changes" comment="- changed os.fileopen to safer alternatives">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pomodoro.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pomodoro.py" afterDir="false" />
-    </list>
+    <list default="true" id="6d99ba49-a57a-44b7-856b-d49fa5924426" name="Changes" comment="- changed os.fileopen to safer alternatives" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -156,7 +153,7 @@
       <workItem from="1733498365528" duration="25695000" />
       <workItem from="1733801530654" duration="1211000" />
       <workItem from="1733824280837" duration="1750000" />
-      <workItem from="1733826682053" duration="5078000" />
+      <workItem from="1733826682053" duration="5936000" />
     </task>
     <task id="LOCAL-00001" summary="completedd">
       <option name="closed" value="true" />
@@ -302,7 +299,39 @@
       <option name="project" value="LOCAL" />
       <updated>1733835911582</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="- changed os.fileopen to safer alternatives">
+      <option name="closed" value="true" />
+      <created>1733837596638</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1733837596638</updated>
+    </task>
+    <task id="LOCAL-00020" summary="- changed os.fileopen to safer alternatives">
+      <option name="closed" value="true" />
+      <created>1733837603508</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1733837603508</updated>
+    </task>
+    <task id="LOCAL-00021" summary="- changed os.fileopen to safer alternatives">
+      <option name="closed" value="true" />
+      <created>1733837610142</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1733837610142</updated>
+    </task>
+    <task id="LOCAL-00022" summary="- changed os.fileopen to safer alternatives">
+      <option name="closed" value="true" />
+      <created>1733837671023</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1733837671023</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
