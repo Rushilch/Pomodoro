@@ -32,28 +32,29 @@ class Task:
                                        text=self.task_no,
                                        font=("Helvetica",16))
         self.task_no_label.grid(row=0, column=0, padx=5, sticky="w")
-
+        self.main_timer_label = ttk.Label(self.frame, text="Time (mins):", font=("Helvetica", 12))
+        self.main_timer_label.grid(row=0, column=1, padx=5, sticky="e")
         self.timer_label = ttk.Label(self.frame,
                                      text="15:00",
                                      font=("Helvetica",16),
                                      bootstyle="info")
-        self.timer_label.grid(row=0, column=1)
+        self.timer_label.grid(row=0, column=2)
 
         self.task_name_label = ttk.Label(self.frame,
                                          text="Task Name",
                                          font=("Helvetica", 12))
-        self.task_name_label.grid(row=0, column=2, padx=5, sticky="w")
+        self.task_name_label.grid(row=0, column=3, padx=5, sticky="w")
 
         self.task_entry = ttk.Entry(self.frame,
                                     font=("Helvetica", 14),
                                     width=10,
                                     bootstyle='light')
-        self.task_entry.grid(row=0, column=3, padx=6)
+        self.task_entry.grid(row=0, column=4, padx=6)
 
         self.time_label= ttk.Label(self.frame,
                                    text="Time",
                                    font=("Helvetica", 12))
-        self.time_label.grid(row=0, column=4, padx=5, sticky="w")
+        self.time_label.grid(row=0, column=5, padx=5, sticky="w")
 
         self.timer_var = tk.StringVar()
         self.timer_entry = ttk.Entry(self.frame,
@@ -61,7 +62,7 @@ class Task:
                                      font=("Helvetica", 14),
                                      width=4,
                                      bootstyle="light")
-        self.timer_entry.grid(row=0, column=5, padx=10)
+        self.timer_entry.grid(row=0, column=6, padx=10)
 
         self.timer_button = ttk.Button(self.frame,
                                        command=self.confirm_time,
@@ -70,7 +71,7 @@ class Task:
                                        cursor='hand2',
                                        bootstyle='success',
                                        )
-        self.timer_button.grid(row=0, column=6, padx=5)
+        self.timer_button.grid(row=0, column=7, padx=5)
 
         self.start_button = ttk.Button(self.frame,
                                        text="Start",
@@ -100,12 +101,12 @@ class Task:
                                           command=self.open_pdf,
                                           bootstyle="info",
                                           cursor='hand2')
-        self.open_pdf_button.grid(row=1, column=3,padx=10, pady=10)
+        self.open_pdf_button.grid(row=1, column=3,padx=5, pady=5)
 
         self.pdf_label = ttk.Label(self.frame,
                                    text="No PDF selected",
                                    font=("Helvetica", 12))
-        self.pdf_label.grid(row=1, column=4, padx=10, pady=10)
+        self.pdf_label.grid(row=1, column=4, padx=5, pady=5)
 
 
     def start_timer(self):
@@ -133,7 +134,7 @@ class Task:
             self.timer_running = False
             self.task_name = self.task_entry.get()
             self.timer_label.config(text="00:00")
-            messagebox.showinfo("Time's Up!", f"Time's up for task: {self.task_name}")
+            messagebox.showinfo("Time's Up!", f"Time's up for task: {self.task_name}", bootstyle="")
             self.open_word_file()
 
     def confirm_time(self):
@@ -152,7 +153,11 @@ class Task:
         if self.pdf_path:
             try:
                 os.startfile(self.pdf_path)
-                self.pdf_label.config(text=self.pdf_path)
+                self.pdf_name = os.path.basename(self.pdf_path)
+                max_length = 20
+                if len(self.pdf_name) > max_length:
+                    self.pdf_name = self.pdf_name[:max_length] + "..."
+                self.pdf_label.config(text=self.pdf_name)
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to open PDF: {e}")
 
