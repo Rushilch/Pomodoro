@@ -246,7 +246,6 @@ class PomodoroApp:
                         self.tasks,
                         task_no)
         self.tasks.append(new_task)
-        print(self.tasks)
 
 def resource_path(relative_path):
     try:
