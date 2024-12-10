@@ -1,6 +1,6 @@
 
-# Pomodoro App
-This project is a **Pomodoro Timer** Application built using Python's **tkinter** and **ttkbootstrap** libraries for creating a graphical user interface (GUI). The application helps users manage tasks efficiently by timing work and break periods based on the Pomodoro technique.
+# Study Timer App
+This project is a **Study Timer** Application built using Python's **tkinter** and **ttkbootstrap** libraries for creating a graphical user interface (GUI). The application helps users manage tasks efficiently by timing work and break periods based on the Pomodoro technique.
 
 
 
