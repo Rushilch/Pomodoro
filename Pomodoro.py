@@ -61,7 +61,7 @@ class Task:
         self.edit_button = ttk.Button(self.frame,
                                        text="Edit Timers",
                                        command=self.edit_timers,
-                                       bootstyle='warning',
+                                       bootstyle='info',
                                        cursor='hand2')
         self.edit_button.grid(row=0, column=5, padx=5)
 
