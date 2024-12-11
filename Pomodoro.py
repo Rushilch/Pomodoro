@@ -11,15 +11,20 @@ import sys
 import webbrowser
 
 class Task:
-    def __init__(self, parent, tasks, task_no, task_name=None, time=15):
+    def __init__(self, parent, tasks, task_no, task_name=None, time=15, test_time=5, break_time=10):
         self.parent = parent
         self.tasks = tasks
         self.task_no = task_no
         self.task_name = task_name
-        self.time = time
-        self.time_remaining = time * 60
+        self.main_time = time
+        self.test_time = test_time
+        self.break_time = break_time
+
+        self.time_remaining = self.main_time * 60
         self.timer_running = False
+        self.current_timer = "main"  # Can be 'main', 'test', 'break'
         self.pdf_path = ''
+
         self.create_widgets()
 
     def create_widgets(self):
@@ -29,16 +34,16 @@ class Task:
                                relief="solid")
         self.frame.pack(fill="x", padx=5, pady=5)
 
-
         self.task_no_label = ttk.Label(self.frame,
                                        text=self.task_no,
-                                       font=("Helvetica",16))
+                                       font=("Helvetica", 16))
         self.task_no_label.grid(row=0, column=0, padx=5, sticky="w")
-        self.main_timer_label = ttk.Label(self.frame, text="Time (mins):", font=("Helvetica", 12))
+
+        self.main_timer_label = ttk.Label(self.frame, text="Main Time (mins):", font=("Helvetica", 12))
         self.main_timer_label.grid(row=0, column=1, padx=5, sticky="e")
         self.timer_label = ttk.Label(self.frame,
                                      text="15:00",
-                                     font=("Helvetica",16),
+                                     font=("Helvetica", 16),
                                      bootstyle="info")
         self.timer_label.grid(row=0, column=2)
 
@@ -53,27 +58,12 @@ class Task:
                                     bootstyle='light')
         self.task_entry.grid(row=0, column=4, padx=6)
 
-        self.time_label= ttk.Label(self.frame,
-                                   text="Time",
-                                   font=("Helvetica", 12))
-        self.time_label.grid(row=0, column=5, padx=5, sticky="w")
-
-        self.timer_var = tk.StringVar()
-        self.timer_entry = ttk.Entry(self.frame,
-                                     textvariable=self.timer_var,
-                                     font=("Helvetica", 14),
-                                     width=4,
-                                     bootstyle="light")
-        self.timer_entry.grid(row=0, column=6, padx=10)
-
-        self.timer_button = ttk.Button(self.frame,
-                                       command=self.confirm_time,
-                                       width=4,
-                                       text="OK",
-                                       cursor='hand2',
-                                       bootstyle='success',
-                                       )
-        self.timer_button.grid(row=0, column=7, padx=5)
+        self.edit_button = ttk.Button(self.frame,
+                                       text="Edit Timers",
+                                       command=self.edit_timers,
+                                       bootstyle='warning',
+                                       cursor='hand2')
+        self.edit_button.grid(row=0, column=5, padx=5)
 
         self.start_button = ttk.Button(self.frame,
                                        text="Start",
@@ -82,14 +72,12 @@ class Task:
                                        cursor='hand2')
         self.start_button.grid(row=1, column=0, padx=10, pady=10)
 
-
         self.reset_button = ttk.Button(self.frame,
                                        text="Reset",
                                        command=self.reset_timer,
                                        bootstyle='info',
                                        cursor='hand2')
         self.reset_button.grid(row=1, column=1, padx=10, pady=10)
-
 
         self.delete_button = ttk.Button(self.frame,
                                         text="Delete",
@@ -103,13 +91,12 @@ class Task:
                                           command=self.open_pdf,
                                           bootstyle="info",
                                           cursor='hand2')
-        self.open_pdf_button.grid(row=1, column=3,padx=5, pady=5)
+        self.open_pdf_button.grid(row=1, column=3, padx=5, pady=5)
 
         self.pdf_label = ttk.Label(self.frame,
                                    text="No PDF selected",
                                    font=("Helvetica", 12))
         self.pdf_label.grid(row=1, column=4, padx=5, pady=5)
-
 
     def start_timer(self):
         if not self.timer_running:
@@ -118,7 +105,8 @@ class Task:
 
     def reset_timer(self):
         self.timer_running = False
-        self.time_remaining = 15 * 60
+        self.current_timer = "main"
+        self.time_remaining = self.main_time * 60
         self.update_timer_label()
 
     def delete_timer(self):
@@ -133,35 +121,23 @@ class Task:
             self.time_remaining -= 1
 
         if self.time_remaining == 0:
-            self.timer_running = False
-            self.task_name = self.task_entry.get()
-            self.timer_label.config(text="00:00")
-            messagebox.showinfo("Time's Up!", f"Time's up for task: {self.task_name}")
-            self.open_word_file()
-
-    def confirm_time(self):
-        try:
-            self.time_remaining = int(self.timer_var.get()) * 60
-            self.update_timer_label()
-        except ValueError:
-            messagebox.showerror("Error", "Please enter a valid number!")
-
-    def update_timer_label(self):
-        mins, secs = divmod(self.time_remaining, 60)
-        self.timer_label.config(text=f"{mins:02}:{secs:02}")
-
-    def open_pdf(self):
-        self.pdf_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
-        if self.pdf_path:
-            try:
-                webbrowser.open(self.pdf_path)
-                self.pdf_name = os.path.basename(self.pdf_path)
-                max_length = 20
-                if len(self.pdf_name) > max_length:
-                    self.pdf_name = self.pdf_name[:max_length] + "..."
-                self.pdf_label.config(text=self.pdf_name)
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to open PDF: {e}")
+            if self.current_timer == "main":
+                self.current_timer = "test"
+                self.time_remaining = self.test_time * 60
+                messagebox.showinfo("Main Time's Up!", "Starting Test Timer.")
+                self.open_word_file()
+                self.main_timer_label.config(text="Test Time (mins):")
+                self.run_timer()
+            elif self.current_timer == "test":
+                self.current_timer = "break"
+                self.time_remaining = self.break_time * 60
+                messagebox.showinfo("Test Time's Up!", "Starting Break Timer.")
+                self.main_timer_label.config(text="Break Time (mins):")
+                self.run_timer()
+            elif self.current_timer == "break":
+                self.timer_running = False
+                messagebox.showinfo("Break Time's Up!", "All timers completed!")
+                self.frame.destroy()
 
 
     def open_word_file(self):
@@ -180,9 +156,50 @@ class Task:
             subprocess.run(["start", doc_file], shell=True, check=True)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open Word file: {e}")
+    def update_timer_label(self):
+        mins, secs = divmod(self.time_remaining, 60)
+        self.timer_label.config(text=f"{mins:02}:{secs:02}")
 
+    def open_pdf(self):
+        self.pdf_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
+        if self.pdf_path:
+            try:
+                webbrowser.open(self.pdf_path)
+                self.pdf_name = os.path.basename(self.pdf_path)
+                max_length = 20
+                if len(self.pdf_name) > max_length:
+                    self.pdf_name = self.pdf_name[:max_length] + "..."
+                self.pdf_label.config(text=self.pdf_name)
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to open PDF: {e}")
 
+    def edit_timers(self):
+        def save_changes():
+            try:
+                self.main_time = int(main_time_var.get())
+                self.test_time = int(test_time_var.get())
+                self.break_time = int(break_time_var.get())
+                self.reset_timer()
+                edit_window.destroy()
+            except ValueError:
+                messagebox.showerror("Error", "Please enter valid numbers!")
 
+        edit_window = tk.Toplevel(self.parent)
+        edit_window.title("Edit Timers")
+
+        ttk.Label(edit_window, text="Main Time (mins):").grid(row=0, column=0, padx=5, pady=5)
+        main_time_var = tk.StringVar(value=str(self.main_time))
+        ttk.Entry(edit_window, textvariable=main_time_var).grid(row=0, column=1, padx=5, pady=5)
+
+        ttk.Label(edit_window, text="Test Time (mins):").grid(row=1, column=0, padx=5, pady=5)
+        test_time_var = tk.StringVar(value=str(self.test_time))
+        ttk.Entry(edit_window, textvariable=test_time_var).grid(row=1, column=1, padx=5, pady=5)
+
+        ttk.Label(edit_window, text="Break Time (mins):").grid(row=2, column=0, padx=5, pady=5)
+        break_time_var = tk.StringVar(value=str(self.break_time))
+        ttk.Entry(edit_window, textvariable=break_time_var).grid(row=2, column=1, padx=5, pady=5)
+
+        ttk.Button(edit_window, text="Save", command=save_changes).grid(row=3, column=0, columnspan=2, pady=10)
 
 class PomodoroApp:
     def __init__(self, root):
@@ -198,10 +215,10 @@ class PomodoroApp:
 
         self.logo = ttk.Label(self.root, image=self.root.img)
         self.logo.pack(pady=20)
-        self.tagline = ttk.Label(self.root, text="Time in your hands", font=("Helvetica", 14,"italic bold "), bootstyle="Danger")
+        self.tagline = ttk.Label(self.root, text="Time in your hands", font=("Helvetica", 14, "italic bold "), bootstyle="Danger")
         self.tagline.pack()
 
-        self.tutorial = ttk.Label(self.root, text="Click here to get started", font=("Helvetica", 14,"italic bold "), bootstyle="Danger")
+        self.tutorial = ttk.Label(self.root, text="Click here to get started", font=("Helvetica", 14, "italic bold "), bootstyle="Danger")
         self.tutorial.pack(pady=20)
 
         arrow_image = Image.open(resource_path("arrow.png"))
@@ -231,7 +248,6 @@ class PomodoroApp:
 
         self.temp = 1
         self.tasks = []
-
 
     def add_task(self):
         task_no = f"Task {self.temp}"
