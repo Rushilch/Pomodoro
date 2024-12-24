@@ -58,9 +58,11 @@ This is was the basic idea behind this project. I wanted to make a pomodoro time
 
 <img src = "https://github.com/user-attachments/assets/4511289a-5bd4-470d-b9ea-3ff7f5797234" width=500>
 
-<img src = "https://github.com/user-attachments/assets/6576b73c-6ce2-4ebf-8620-94607b41ba84" width=500>
+<img src = "https://github.com/user-attachments/assets/7dce1c20-c488-4ec4-8bae-357b4261d8b0" width=500>
 
 <img src = "https://github.com/user-attachments/assets/a29b974a-1a41-4b8c-b66b-516559330950">
+
+<img src = "https://github.com/user-attachments/assets/94c030db-6ca8-493c-bcae-e20d974c143e">
 
 <img src = "https://github.com/user-attachments/assets/c07d8725-6d5f-4f40-a101-5e9ad3cbc57a" width=500>
 
